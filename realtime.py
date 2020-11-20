@@ -360,3 +360,108 @@ def get45135(arr):
   with open("TAMIL.csv", 'a') as f:
     writer = csv.writer(f)
     writer.writerow(features)
+
+x_test = features
+
+'''Now drop the redundant features from our data set'''
+
+del x_test[135]
+del x_test[134]
+del x_test[133]
+del x_test[132]
+del x_test[130]
+del x_test[126]
+del x_test[125]
+del x_test[124]
+del x_test[122]
+del x_test[120]
+del x_test[119]
+del x_test[116]
+del x_test[115]
+del x_test[114]
+del x_test[99]
+del x_test[97]
+del x_test[95]
+del x_test[93]
+del x_test[91]
+del x_test[88]
+del x_test[85]
+del x_test[81]
+del x_test[78]
+del x_test[77]
+del x_test[75]
+del x_test[70]
+del x_test[68]
+del x_test[65]
+del x_test[62]
+del x_test[58]
+del x_test[53]
+del x_test[52]
+del x_test[51]
+del x_test[50]
+del x_test[46]
+del x_test[44]
+del x_test[42]
+del x_test[37]
+del x_test[34]
+del x_test[33]
+del x_test[32]
+del x_test[31]
+del x_test[26]
+del x_test[23]
+del x_test[22]
+del x_test[18]
+del x_test[16]
+del x_test[12]
+del x_test[11]
+del x_test[10]
+del x_test[7]
+del x_test[5]
+del x_test[0]
+import numpy as np
+a = np.array(x_test)[np.newaxis]
+#print(a)
+#print(a.T)
+
+'''Here we save our feature vector into a file.csv file'''
+
+#with open("optimized.csv", 'a') as f:
+   # writer = csv.writer(f)
+    #writer.writerow(x_test)
+
+#import numpy
+#numpy.savetxt("opt.csv", a, delimiter=",")
+
+import pandas as pd 
+pd.DataFrame(a).to_csv("file.csv", index=None)
+
+'''Loading our prediction dataset'''
+x_test = pd.read_csv('/content/file.csv')
+'''Normalizing the data and predicitng the output'''
+x_test = preprocessing.normalize(x_test)
+
+y_pred= model.predict_classes(x_test)
+
+'''As we have used 4 nodes in our output layer to represent 4 languages while defining our model, we will get our output from 0 to 3.'''
+if y_pred == 0:
+  print("Spoken language is Bengali")
+elif y_pred == 1:
+  print("Spoken language is Hindi")
+elif y_pred == 2:
+  print("Spoken language is Marathi")
+elif y_pred == 3:
+  print("Spoken language is Malayalam")
+else:
+  print("Unknown Language")
+
+
+
+
+
+
+
+
+
+
+
+
