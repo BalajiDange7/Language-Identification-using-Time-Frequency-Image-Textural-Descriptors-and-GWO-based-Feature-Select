@@ -19,9 +19,6 @@ import os
 import sys
 import glob
 
-
-
-
 from skimage.feature import local_binary_pattern as lbp
 import os,sys,math,cv2
 #import numpy as np
@@ -39,6 +36,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from sklearn.model_selection import train_test_split
 
+
 '''2. Loading the dataset
 These csv files are created by the following steps:
 
@@ -54,10 +52,10 @@ y_test = pd.read_csv('/content/featureL4ytest.csv')
 print(x_train.shape,y_train.shape,x_test.shape,y_test.shape)
 from keras.utils import np_utils
 
+
 '''3. Applying one-hot encoding to the training dataset'''
 
 n_classes=4
-
 
 print("Shape before one-hot encoding",y_train.shape)
 y_train=np_utils.to_categorical(y_train,n_classes)
@@ -67,10 +65,12 @@ x_train=preprocessing.normalize(x_train)
 x_test=preprocessing.normalize(x_test)
 y_orig = y_test
 
+
 '''4.Importing libraries to create our Deep Sequential Neural Network'''
 
 from keras.models import Sequential
 from keras.layers.core import Dense,Activation
+
 
 '''5.Creating a Deep sequential neural network object 'model' and assigning various layers and activation functions to it.'''
 
@@ -88,17 +88,22 @@ model.add(Dense(4))
 model.add(Activation('relu'))
 model.add(Dense(4))
 model.add(Activation('softmax'))
+
 # compile the model
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
 
 '''6.Training the Deep sequential neural network'''
 
 #training deep neural network
 history= model.fit(x_train,y_train,batch_size=10,epochs=160,validation_data=[x_test,y_test])
 
+
 '''7.To find the accuracy of our model'''
+
 scores = model.evaluate(x_test, y_test)
 print("Accuracy: %.2f%%" % (scores[1]*100))
+
 
 '''8. Let's use our trained model to predict the outcome of our test data'''
 
@@ -106,6 +111,7 @@ y_pred= model.predict_classes(x_test)
 for i in range(1070):
 	print("X=%s, Predicted=%s" % (i, y_pred[i]))
     
+
 '''Once we have trained our model we will use this model in real time to detect our own voice into any of the 4 languages: Hindi, Marathi, Malayalam and Bengali
 This part of the code shows how a spectrogram image is created from an audio file and how we apply GWO(Grey Wolf Optimization) algorithm for Feature Selection to determine the redundant features and drop them from our dataset.'''
 
@@ -113,7 +119,7 @@ This part of the code shows how a spectrogram image is created from an audio fil
 Step 1. Our recorded voice's audio file will be converted into a spectrogram image
 Step 2. The spectrogram image will be converted into a feature vector using Rotational Invariant Complete Linear Binary Pattern (RICLBP)
 Step 3. Then we will decide the redundant features using Grey Wolf Optimization (GWO) algorithm and store it in a csv file.
-Step 4. We will load our csv file for the prediction**
+Step 4. We will load our csv file for the prediction
 Step 5. We will normalize our dataset
 Step 6. Now we will use our pre-trained model to predict our voice.'''
 
@@ -187,7 +193,8 @@ for filename in glob.glob(os.path.join(path,'*.wav')):
 
       # convert step size into number of overlapping samples in adjacent analysis frames
       noverlap = window_nsamp - step_nsamp
-         # compute the power spectral density
+         
+		# compute the power spectral density
       freqs, times, power = spectrogram(x, detrend=False, mode='psd', fs=fs,
                                         scaling='density', noverlap=noverlap,
                                         window=window, nperseg=window_nsamp)
@@ -218,7 +225,8 @@ for filename in glob.glob(os.path.join(path,'*.wav')):
       ax.imshow(power, origin='lower', aspect='auto', cmap=cmap,
                 norm=LogNorm(), extent=extent, vmin=vmin, vmax=None)
       return ax
- #ax=plt.subplot(111)  
+  
+  #ax=plt.subplot(111)  
   ax = gaussian_spectrogram(wav_data, sampling_frequency)
   #ax.set_xlabel('time (s)')
   #ax.set_ylabel('frequency (Hz)');
@@ -244,6 +252,7 @@ for filename in glob.glob(os.path.join(path,'*.wav')):
           return 1
       else:
           return 0
+  
   def dec2bin(val):
       l=[int(x) for x in bin(val)[2:]]
       b=[0]*(8-len(l))
@@ -251,7 +260,8 @@ for filename in glob.glob(os.path.join(path,'*.wav')):
       dia=b[0::2]
       st=b[1::2]
       return dia,st
- def getlbp(img): 
+ 
+  def getlbp(img): 
       neighbours=8
       counter=0
       h,w=img.shape
@@ -260,7 +270,7 @@ for filename in glob.glob(os.path.join(path,'*.wav')):
       str_img=np.zeros((h,w),dtype=np.uint8)
       for x in range(1,h+1):
           for y in range(1,w+1):
-      #         center=img[i,j]
+              #center=img[i,j]
               dia=[]
               hor=[]
               for counter in range(0,neighbours):
@@ -290,22 +300,23 @@ for filename in glob.glob(os.path.join(path,'*.wav')):
       y,x=arr.shape
       for i in range(y):
           for j in range(x):
-      #         print(i,j)
+              #print(i,j)
               try:
                   list0.append((arr[i][j],arr[i][j+1]))
               except:
                   pass
               try:
-      #             print(arr[j,i],arr[j,i+1])
+                  #print(arr[j,i],arr[j,i+1])
                   list90.append((arr[j][i],arr[j+1][i]))
 
-  #                 print(arr[j,i],arr[j+1,i])
+                  #print(arr[j,i],arr[j+1,i])
 
               except:
                   continue
       return list0,list90
-def get45135(arr):
-  #     print(np.where(arr==0))
+   
+    def get45135(arr):
+      #print(np.where(arr==0))
       list45=[]
       list135=[]
       y,x=arr.shape
@@ -326,12 +337,13 @@ def get45135(arr):
 
   def groupandcount(lis):
       lis=[(item[1],item[0]) if item[0]>item[1] else (item[0],item[1]) for item in lis]
-  #     print(len(set(lis)))
+      #print(len(set(lis)))
       counts = dict()
       for i in lis:
         counts[i] = counts.get(i, 0) + 1
       return counts
- def getfeatures(image):
+  
+   def getfeatures(image):
       # t1=time.time()
       im1,im2=getlbp(image)
       # print(time.time()-t1)
@@ -361,9 +373,12 @@ def get45135(arr):
     writer = csv.writer(f)
     writer.writerow(features)
 
+	
 x_test = features
 
+
 '''Now drop the redundant features from our data set'''
+
 
 del x_test[135]
 del x_test[134]
@@ -418,10 +433,12 @@ del x_test[10]
 del x_test[7]
 del x_test[5]
 del x_test[0]
+
 import numpy as np
 a = np.array(x_test)[np.newaxis]
 #print(a)
 #print(a.T)
+
 
 '''Here we save our feature vector into a file.csv file'''
 
@@ -436,13 +453,17 @@ import pandas as pd
 pd.DataFrame(a).to_csv("file.csv", index=None)
 
 '''Loading our prediction dataset'''
+
 x_test = pd.read_csv('/content/file.csv')
+
 '''Normalizing the data and predicitng the output'''
+
 x_test = preprocessing.normalize(x_test)
 
 y_pred= model.predict_classes(x_test)
 
 '''As we have used 4 nodes in our output layer to represent 4 languages while defining our model, we will get our output from 0 to 3.'''
+
 if y_pred == 0:
   print("Spoken language is Bengali")
 elif y_pred == 1:
